@@ -42,7 +42,9 @@
 - Доступ к потенциальным внутренним ресурсам
 ### Затронутая область
 Конечная точка: `/api/admin/create_product` (POST)
+
 Файлы: `app.py` (функция `create_product`)
+
 Код:
 ```python
 # [...]
@@ -131,6 +133,7 @@ JWT_SECRET = "funkymonkey"
 - Облегчение перебора паролей злоумышленником при компрометации хешей паролей.
 ### Затронутая область
 Файлы: `app.py` (функция `hash_password`)
+
 Код:
 ```python
 def hash_password(pw):
@@ -150,7 +153,9 @@ def hash_password(pw):
 - Перезапись файлов с определенными расширениями: jpg, jpeg, png, gif, txt, pdf.
 ### Затронутая область
 Конечная точка: `/api/admin/upload` (POST)
+
 Файлы: `app.py` (функция `upload_file`)
+
 Код:
 ```python
 # [...]
@@ -194,7 +199,9 @@ def upload_file():
 - Просмотр локальных файлов.
 ### Затронутая область
 Конечная точка: `/api/admin/view?file=XXX` (GET)
+
 Файлы: `app.py` (функция `view_file`)
+
 Код:
 ```python
 @app.route("/api/admin/view", methods=["GET"])
@@ -224,6 +231,7 @@ def view_file():
 - При компрометации JWT пользователь может изменить пароль, не зная его.
 ### Затронутая область
 Конечная точка: `/api/settings/password` (POST)
+
 Файлы: `app.py` (функция `change_password`)
 ### Исправление
 - Добавить проверку текущего пароля.
@@ -237,7 +245,9 @@ def view_file():
 - Облегчение брутфорса пароля
 ### Затронутая область
 Конечная точка: `/api/auth/register` (POST), `/api/settings/password` (POST).
+
 Файлы: `app.py` (функция `register`, `change_password`)
+
 Код:
 ```python
 def change_password():
@@ -269,7 +279,9 @@ def register():
 - При компрометации токена, даже если пользователь выйдет из аккаунта - у злоумышленника также будет доступ.
 ### Затронутая область
 Конечная точка: `/api/auth/logout` (POST)
+
 Файлы: `app.py` (функция `logout`)
+
 Код:
 ```python
 @app.route("/api/auth/logout", methods=["POST"])
@@ -295,6 +307,7 @@ def logout():
 - Компрометация УЗ
 ### Затронутая область
 Файлы: `app.py` (функция `set_auth_cookies`)
+
 Код:
 ```python
 def set_auth_cookies(resp, username, role):
@@ -323,7 +336,9 @@ def set_auth_cookies(resp, username, role):
 - Использование в комбинации с SSRF (F-H-1) для обхода фильтров.
 ### Затронутая область
 Конечная точка: `/go` (GET)
+
 Файлы: `app.py` (класс `ServiceMiddleware`, функция `__call__`)
+
 Код:
 ```python
 class ServiceMiddleware:
@@ -356,7 +371,9 @@ class ServiceMiddleware:
 - Потенциальное раскрытие внутренней технической информации в будущем при добавлении или изменении функционала.
 ### Затронутая область
 Конечная точка: `/health` (GET), `/metrics` (GET)
+
 Файлы: `app.py` (класс `ServiceMiddleware`, функция `__call__`)
+
 Код:
 ```python
 class ServiceMiddleware:

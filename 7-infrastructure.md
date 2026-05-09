@@ -4,7 +4,7 @@
 ## 1. Настройка
 Для работы необходимо установить `mimikatz` и `openssl`.
 После установки открываем PowerShell от имени Администратора и переходим в директорию дампа с папками `ProgramData` и `Windows`.
-## 2. Извлекаем секрет DPAPI_SYSTEM из реестра
+## 2. Извлечение секрета DPAPI_SYSTEM из реестра
 ```bash
 mimikatz "lsadump::secrets /system:Windows\System32\config\SYSTEM /security:Windows\System32\config\SECURITY" exit
 ```

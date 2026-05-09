@@ -89,7 +89,9 @@ public class SharedPrefsManager {
 Любое приложение может отправить Intent вида `vibepass://app/about` и получить положительное значение (`true`) параметра `authSucceeded` в `MainActivity`.
 ### Затронутая область
 Класс `DeeplinkActivity`, функция `handleData`, `startMainActivity`.
+
 Также, файл `AndroidManifest.xml`.
+
 Код:
 ```java
 // Класс DeeplinkActivity
@@ -148,7 +150,9 @@ public class DeeplinkActivity extends AppCompatActivity {
 Атакующий получает возможность получить любой файл из приватной папки приложения.
 ### Затронутая область
 Класс `LogsExportProvider`, функция `openFile`.
+
 Также, файл `AndroidManifest.xml`.
+
 Код:
 ```java
 // Класс LogsExportProvider
@@ -185,6 +189,7 @@ content://.../logs/ly8pdwVLhai0mCTN/..%2F..%2Fshared_prefs%2Fvibepass.xml
 Кража секретов.
 ### Затронутая область
 Классы `FullUnlockActivity`, `QuickUnlockActivity`, функции `setupListeners`
+
 Код:
 ```java
 public class FullUnlockActivity extends AppCompatActivity {
@@ -235,7 +240,8 @@ private byte[] getSalt() {
 ### Риск
 Злоумышленник может модифицировать зашифрованный файл базы без обнаружения.
 ### Затронутая область
-Класс `EncryptionManager`
+Класс `EncryptionManager`.
+
 Код:
 ```java
 public class EncryptionManager {
@@ -261,11 +267,11 @@ public class EncryptionManager {
 Любое приложение может прочитать буфер обмена.
 ### Затронутая область
 Класс `ManageVaultActivity`, функция `copyPassword`
+
 Код:
 ```java
 public class ManageVaultActivity extends AppCompatActivity {
     // [...]
-
     private void copyPassword(String str) {
         ClipboardManager clipboardManager = (ClipboardManager) getSystemService("clipboard");
         ClipData newPlainText = ClipData.newPlainText(UnlockedVaultDB.COLUMN_PASSWORD, str);
@@ -282,6 +288,7 @@ public class ManageVaultActivity extends AppCompatActivity {
 В манифесте отсутствуют `android:screenOrientation` и какие-либо другие атрибуты защиты экрана. Активности `FullUnlockActivity`, `QuickUnlockActivity`, `ManageVaultActivity` не защищены от скринов и отображения в переключателе задач
 ### Затронутая область
 Файл `AndroidManifest.xml`.
+
 Активности: `FullUnlockActivity`, `QuickUnlockActivity`, `ManageVaultActivity`
 ### Исправление
 В каждой чувствительно активности добавить флаги `WindowManager.LayoutParams.FLAG_SECURE`, а также настроить атрибуты манифеста.

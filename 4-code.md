@@ -43,7 +43,9 @@
 - Захват ресурса при компрометации API-ключа администратора злоумышленником 
 ### Затронутая область
 Конечная точка: `/api/email/payslip` (POST)
+
 Файлы: `TemplateService.cs` (класс `TemplateService`, функция `Sanitize`), `EmailController.cs` (класс `EmailController`, функция `SendPayslip`).
+
 Код:
 ```cs
 // TemplateService.cs
@@ -192,6 +194,7 @@ Your salary in @Model.Month is @Model.Salary!
 		template += "\n" + req.Comment;
 	}
 	```
+- Использовать проверенные шаблонизаторы, например **StringTemplate.NET**
 ## F-H-2. Захват аккаунта через сброс пароля (High)
 ### Классификация
 - CWE-284: Improper Access Control
@@ -203,7 +206,9 @@ Your salary in @Model.Month is @Model.Salary!
 - Комбинация с другими уязвимостями (см. цепочку эксплуатации) 
 ### Затронутая область
 Конечная точка: `/api/user/password/reset` (POST).
+
 Файлы: `UserController.cs`  (класс `UserController`, функция `Reset`).
+
 Код:
 ```cs
 [ApiController]
@@ -273,7 +278,9 @@ if (account == null)
 - Комбинация с другими уязвимостями (см. цепочку эксплуатации) 
 ### Затронутая область
 Конечная точка: `/PdfGenerator` (POST)
+
 Файлы: `GeneratePdfReportController.cs` (класс `PdfGeneratorController`, функции `GeneratePdf`, `SanitizeHtml`)
+
 Код:
 ```cs
 // PdfGeneratorController.GeneratePdf [инициализация браузера]
@@ -373,21 +380,21 @@ public class PdfGeneratorController : ControllerBase
 	```
 ### Исправление
 - Настройка конфигурации, например:
-```js
-await using var browser = await Puppeteer.LaunchAsync(
-	new LaunchOptions {
-		Headless = true, 
-		Args = new[] {
-			// убрать атрибуты --no-sandbox и --allow-file-access-from-files
-			"--disable-local-file-access", // запрет доступа к file://
-			"--disable-setuid-sandbox", // запуск песочницы без root-прав
-		}
-	}
-);
+    ```js
+    await using var browser = await Puppeteer.LaunchAsync(
+        new LaunchOptions {
+            Headless = true, 
+            Args = new[] {
+                // убрать атрибуты --no-sandbox и --allow-file-access-from-files
+                "--disable-local-file-access", // запрет доступа к file://
+                "--disable-setuid-sandbox", // запуск песочницы без root-прав
+            }
+        }
+    );
 
-await using var page = await browser.NewPageAsync();
-await page.SetJavaScriptEnabledAsync(false); // для предотвращения XSS-атак
-```
+    await using var page = await browser.NewPageAsync();
+    await page.SetJavaScriptEnabledAsync(false); // для предотвращения XSS-атак
+    ```
 - Для очистки HTML использовать проверенные библиотеки, например **Ganss.HtmlSanitizer**
 - Для защиты от SSRF использовать интерцепторы:
 	```cs
@@ -406,7 +413,9 @@ await page.SetJavaScriptEnabledAsync(false); // для предотвращен�
 - Перечисление пользователей (разведка)
 ### Затронутая область
 Конечная точка: `/api/user?userId=XXX` (GET)
+
 Файлы: `UserController.cs` (класс `UserController`, функция `GetUserInfo`)
+
 Код:
 ```cs
 [ApiController]
@@ -499,9 +508,11 @@ FROM Users u {whereClause};"; /* <--- */
 2) Анонимный пользователь эксплуатирует захват аккаунта (F-H-2) на email обычного пользователя или администратор.
 ## RCE через аккаунт администратор
 1) Разведка ресурсов сайта с правами администратора с целью найти API-ключ
+   
    *(например, в каком-нибудь дашборде или в настройках)*
 2) Использование SSTI (F-H-1) для эксплуатации RCE
 ## RCE через LFI через аккаунт пользователя
 1) Использование серверной XSS (F-H-3) для поиска файлов, в которых может содержаться API-ключ администратора
+   
    *(файл в котором хранятся переменные окружения, файл `/etc/app/secrets/admin_api_key.txt`).*
 2) Использование SSTI (F-H-1) для эксплуатации RCE
